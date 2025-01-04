@@ -342,7 +342,7 @@ local function key_LISTENER()
 	UserInputService.InputBegan:Connect(function(input, isProcessed)
 		if not isProcessed then
 			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl) then
-				if input.KeyCode == Enum.KeyCode.LeftControl and S1_isActivated == true then	
+				if input.KeyCode == Enum.KeyCode.E then	
 					if MAIN_OBJ~=nil then
 						local startTime = tick() 
 						local followDuration = 1 
@@ -353,7 +353,7 @@ local function key_LISTENER()
 						USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
 					
 					end	
-				else if input.KeyCode == Enum.KeyCode.LeftControl and S2_isActivated == true then
+				else if input.KeyCode == Enum.KeyCode.E then
 						if MAIN_OBJ~=nil then
 							local startTime = tick() 
 							local followDuration = 1 
