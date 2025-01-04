@@ -42,6 +42,7 @@ local MAIN_OBJ = nil
 
 local function gen_UI()
 	player_stats.Name = "player_stats"
+	player_stats.ResetOnSpawn = false
 	player_stats.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	player_stats.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
