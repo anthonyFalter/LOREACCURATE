@@ -338,37 +338,25 @@ local function isPartMoving(part)
 end
 
 local function key_LISTENER()
-	local USER_PART = player.Character:WaitForChild("HumanoidRootPart")
-	UserInputService.InputBegan:Connect(function(input, isProcessed)
-		if not isProcessed then
-			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl) then
-				if input.KeyCode == Enum.KeyCode.E then	
-					if MAIN_OBJ~=nil then
-						local startTime = tick() 
-						local followDuration = 1 
-						local originalPosition = USER_PART.Position
-						local teleportPartCFrame = MAIN_OBJ.CFrame
-						local backOffset = teleportPartCFrame.LookVector * -1 
+    local USER_PART = player.Character:WaitForChild("HumanoidRootPart")
+    
+    UserInputService.InputBegan:Connect(function(input, isProcessed)
+        if not isProcessed then
+            -- Check if the E key is pressed
+            if input.KeyCode == Enum.KeyCode.E then
+                if MAIN_OBJ ~= nil then
+                    local startTime = tick()
+                    local followDuration = 1
+                    local originalPosition = USER_PART.Position
+                    local teleportPartCFrame = MAIN_OBJ.CFrame
+                    local backOffset = teleportPartCFrame.LookVector * -1 -- Change to 1 if you want to teleport forward
 
-						USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-					
-					end	
-				else if input.KeyCode == Enum.KeyCode.E then
-						if MAIN_OBJ~=nil then
-							local startTime = tick() 
-							local followDuration = 1 
-							local originalPosition = USER_PART.Position
-							local teleportPartCFrame = MAIN_OBJ.CFrame
-							local backOffset = teleportPartCFrame.LookVector * 1 
-
-							USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-
-						end	
-				end
-			end
-		end
-	end
-end)
+                    -- Teleport the player to the calculated position
+                    USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+                end
+            end
+        end
+    end)
 end
 
 local function isPlayerUnderMouse(mouseX, mouseY)
