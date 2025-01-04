@@ -381,10 +381,15 @@ local function isPlayerUnderMouse(mouseX, mouseY)
 		if character:FindFirstChild("Humanoid") then
 			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
 			if humanoidRootPart then
-				MAIN_OBJ = part
-				return true, character, part
+			    -- Check if the HumanoidRootPart's parent is the local player's character
+			    if humanoidRootPart.Parent == game.Players.LocalPlayer.Character then
+			        MAIN_OBJ = nil
+			    else
+			        MAIN_OBJ = part
+			    end
+			    return true, character, part
 			else
-				MAIN_OBJ = nil
+			    MAIN_OBJ = nil
 			end
 		end
 	end
