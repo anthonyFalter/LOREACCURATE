@@ -32,6 +32,7 @@ local mouseY_TXT_2 = Instance.new("TextLabel")
 local abilityName_2 = Instance.new("TextLabel")
 local TIPS = Instance.new("TextLabel")
 local CREDS = Instance.new("TextLabel")
+local runService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
 --ACTIVATED_VAR
@@ -39,10 +40,11 @@ local S1_isActivated = false
 local S2_isActivated = false 
 
 local MAIN_OBJ = nil
+local tempOBJ = MAIN_OBJ
 
 local function gen_UI()
 	player_stats.Name = "player_stats"
-	player_stats.ResetOnSpawn = true
+	player_stats.ResetOnSpawn = false
 	player_stats.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	player_stats.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -344,15 +346,18 @@ local function key_LISTENER()
 		if not isProcessed then
 			-- Check if the E key is pressed
 			if input.KeyCode == Enum.KeyCode.E then
-				if MAIN_OBJ ~= nil then
+				if MAIN_OBJ and MAIN_OBJ.Parent ~= player.Character then
+					tempOBJ = MAIN_OBJ
 					if S1_isActivated == true then
 						local startTime = tick()
 						local followDuration = 1
 						local originalPosition = USER_PART.Position
 						local teleportPartCFrame = MAIN_OBJ.CFrame
 						local backOffset = teleportPartCFrame.LookVector * -1 
+						print("TARGET: "..MAIN_OBJ.Name)
+						print("PLAYERL: "..USER_PART.Name)
 						USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-						
+
 					else if S2_isActivated == true then
 							local startTime = tick()
 							local followDuration = 1
@@ -360,10 +365,11 @@ local function key_LISTENER()
 							local teleportPartCFrame = MAIN_OBJ.CFrame
 							local backOffset = teleportPartCFrame.LookVector * 1 
 							USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)	
-							
+
 						end
 					end
-					
+				else
+					MAIN_OBJ = tempOBJ
 				end
 			end
 		end
@@ -387,6 +393,20 @@ local function addOutlineToCharacter(character)
 	currentOutline = highlight
 end
 
+local function rotateToTarget(loc, targ)
+	if loc and targ ~= nil then
+		local targetPosition = targ.Position
+		local currentPosition = loc.Position
+		local lookVector = (targetPosition - currentPosition).Unit
+
+		local newCFrame = CFrame.new(currentPosition) * CFrame.lookAt(currentPosition, targetPosition)
+
+		loc.CFrame = CFrame.new(currentPosition, targetPosition)	
+	end
+	
+end
+
+
 local function isPlayerUnderMouse(mouseX, mouseY)
 	local rayOrigin = game.Workspace.CurrentCamera.CFrame.Position
 	local rayDirection = (game.Workspace.CurrentCamera:ScreenPointToRay(mouseX, mouseY)).Direction * 1000
@@ -397,24 +417,30 @@ local function isPlayerUnderMouse(mouseX, mouseY)
 		local character = part.Parent
 		if character:FindFirstChild("Humanoid") then			
 			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
-			if humanoidRootPart and humanoidRootPart.parent.Name~=player.Character:WaitForChild("HumanoidRootPart").Parent.Name then
-				MAIN_OBJ = part
+			if humanoidRootPart and character ~= player.Character then
+				
 				if S1_isActivated == true then
+					MAIN_OBJ = part
+					tempOBJ = MAIN_OBJ
 					playerTargetTXT.Text = "PlayerOnTarget: "..MAIN_OBJ.Parent.Name
 					tpLOCTXT.Text = "TargetGoal: "..humanoidRootPart.Name	
 					addOutlineToCharacter(character)
+					return true, character, part
 					
 				elseif S2_isActivated == true then
+					MAIN_OBJ = part
+					tempOBJ = MAIN_OBJ
 					playerTargetTXT_2.Text = "PlayerOnTarget: "..MAIN_OBJ.Parent.Name
 					tpLOCTXT_2.Text = "TargetGoal: "..humanoidRootPart.Name
 					addOutlineToCharacter(character)
+					return true, character, part
 				end
 					
 				
 				
-				return true, character, part
+				
 			else
-				MAIN_OBJ = nil
+				MAIN_OBJ = tempOBJ
 			end
 
 		end
@@ -549,4 +575,13 @@ UserInputService.InputChanged:Connect(function(input)
 	if input == dragInput and dragging then
 		update(input)
 	end
+end)
+
+runService.Heartbeat:Connect(function()
+	if S1_isActivated == true then
+		rotateToTarget(player.Character:WaitForChild("HumanoidRootPart"), MAIN_OBJ)
+	elseif S2_isActivated == true then
+		rotateToTarget(player.Character:WaitForChild("HumanoidRootPart"), MAIN_OBJ)
+	end
+	
 end)
