@@ -516,6 +516,7 @@ activate.MouseButton1Click:Connect(function()
 		activate.BackgroundColor3 = Color3.fromRGB(214, 98, 100)
 		activate.Text = "OFF"
 		S1_isActivated = false
+			MAIN_OBJ = nil
 	end
 
 end)
@@ -536,6 +537,7 @@ activate_2.MouseButton1Click:Connect(function()
 	else
 		activate_2.BackgroundColor3 = Color3.fromRGB(214, 98, 100)
 		activate_2.Text = "OFF"
+		MAIN_OBJ = nil
 		S2_isActivated = false
 	end
 
