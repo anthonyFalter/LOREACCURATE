@@ -338,25 +338,53 @@ local function isPartMoving(part)
 end
 
 local function key_LISTENER()
-    local USER_PART = player.Character:WaitForChild("HumanoidRootPart")
-    
-    UserInputService.InputBegan:Connect(function(input, isProcessed)
-        if not isProcessed then
-            -- Check if the E key is pressed
-            if input.KeyCode == Enum.KeyCode.E then
-                if MAIN_OBJ ~= nil then
-                    local startTime = tick()
-                    local followDuration = 1
-                    local originalPosition = USER_PART.Position
-                    local teleportPartCFrame = MAIN_OBJ.CFrame
-                    local backOffset = teleportPartCFrame.LookVector * -1 -- Change to 1 if you want to teleport forward
+	local USER_PART = player.Character:WaitForChild("HumanoidRootPart")
 
-                    -- Teleport the player to the calculated position
-                    USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-                end
-            end
-        end
-    end)
+	UserInputService.InputBegan:Connect(function(input, isProcessed)
+		if not isProcessed then
+			-- Check if the E key is pressed
+			if input.KeyCode == Enum.KeyCode.E then
+				if MAIN_OBJ ~= nil then
+					if S1_isActivated == true then
+						local startTime = tick()
+						local followDuration = 1
+						local originalPosition = USER_PART.Position
+						local teleportPartCFrame = MAIN_OBJ.CFrame
+						local backOffset = teleportPartCFrame.LookVector * -1 
+						USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+						
+					else if S2_isActivated == true then
+							local startTime = tick()
+							local followDuration = 1
+							local originalPosition = USER_PART.Position
+							local teleportPartCFrame = MAIN_OBJ.CFrame
+							local backOffset = teleportPartCFrame.LookVector * 1 
+							USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)	
+							
+						end
+					end
+					
+				end
+			end
+		end
+	end)
+end
+
+local currentOutline
+local function addOutlineToCharacter(character)
+	if currentOutline then
+		currentOutline:Destroy()
+	end
+
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "Outline"
+	highlight.Adornee = character
+	highlight.FillTransparency = 1
+	highlight.OutlineColor = Color3.new(0, 1, 0)
+	highlight.OutlineTransparency = 0
+	highlight.Parent = character
+
+	currentOutline = highlight
 end
 
 local function isPlayerUnderMouse(mouseX, mouseY)
@@ -369,8 +397,20 @@ local function isPlayerUnderMouse(mouseX, mouseY)
 		local character = part.Parent
 		if character:FindFirstChild("Humanoid") then			
 			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
-			if humanoidRootPart then
+			if humanoidRootPart and humanoidRootPart.parent.Name~=player.Character:WaitForChild("HumanoidRootPart").Parent.Name then
 				MAIN_OBJ = part
+				if S1_isActivated == true then
+					playerTargetTXT.Text = "PlayerOnTarget: "..MAIN_OBJ.Parent.Name
+					tpLOCTXT.Text = "TargetGoal: "..humanoidRootPart.Name	
+					addOutlineToCharacter(character)
+					
+				elseif S2_isActivated == true then
+					playerTargetTXT_2.Text = "PlayerOnTarget: "..MAIN_OBJ.Parent.Name
+					tpLOCTXT_2.Text = "TargetGoal: "..humanoidRootPart.Name
+				end
+					
+				
+				
 				return true, character, part
 			else
 				MAIN_OBJ = nil
@@ -378,7 +418,7 @@ local function isPlayerUnderMouse(mouseX, mouseY)
 
 		end
 	end
-	
+
 	return false, nil, part
 end
 
@@ -442,15 +482,15 @@ activate.MouseButton1Click:Connect(function()
 			S2_isActivated = false
 			activate_2.BackgroundColor3 = Color3.fromRGB(214, 98, 100)
 			activate_2.Text = "OFF"
-			
+
 		end
-		
+
 	else
 		activate.BackgroundColor3 = Color3.fromRGB(214, 98, 100)
 		activate.Text = "OFF"
 		S1_isActivated = false
 	end
-	
+
 end)
 
 
@@ -465,7 +505,7 @@ activate_2.MouseButton1Click:Connect(function()
 			activate.Text = "OFF"
 
 		end
-		
+
 	else
 		activate_2.BackgroundColor3 = Color3.fromRGB(214, 98, 100)
 		activate_2.Text = "OFF"
