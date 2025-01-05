@@ -407,6 +407,7 @@ local function isPlayerUnderMouse(mouseX, mouseY)
 				elseif S2_isActivated == true then
 					playerTargetTXT_2.Text = "PlayerOnTarget: "..MAIN_OBJ.Parent.Name
 					tpLOCTXT_2.Text = "TargetGoal: "..humanoidRootPart.Name
+					addOutlineToCharacter(character)
 				end
 					
 				
