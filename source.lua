@@ -394,19 +394,18 @@ local function addOutlineToCharacter(character)
 end
 
 local function rotateToTarget(loc, targ)
-	if loc and targ ~= nil then
-		if S1_isActivated == true or S2_isActivated == true then
-			local targetPosition = targ.Position
-			local currentPosition = loc.Position
-			local lookVector = (targetPosition - currentPosition).Unit
-	
-			local newCFrame = CFrame.new(currentPosition) * CFrame.lookAt(currentPosition, targetPosition)
-	
-			loc.CFrame = CFrame.new(currentPosition, targetPosition)
-		end
-			
-	end
-	
+    if loc and targ ~= nil then
+        if S1_isActivated == true or S2_isActivated == true then
+            local targetPosition = targ.Position
+            local currentPosition = loc.Position
+            
+            
+            local adjustedTargetPosition = Vector3.new(targetPosition.X, currentPosition.Y, targetPosition.Z)
+            
+            
+            loc.CFrame = CFrame.new(currentPosition, adjustedTargetPosition)
+        end
+    end
 end
 
 
