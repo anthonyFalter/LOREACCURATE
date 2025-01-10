@@ -557,13 +557,30 @@ local dragInput
 local dragStart
 local startPos
 
+local mouseOver = false 
+
+-- Function to update the position of `kc`
 local function update(input)
 	local delta = input.Position - dragStart
-	kc.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	kc.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
 end
 
+-- MouseEnter and MouseLeave events to detect when the mouse is over `kc`
+kc.MouseEnter:Connect(function()
+	mouseOver = true
+end)
+
+kc.MouseLeave:Connect(function()
+	mouseOver = false
+end)
+
 UserInputService.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	if mouseOver and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
 		dragging = true
 		dragStart = input.Position
 		startPos = kc.Position
@@ -587,7 +604,6 @@ UserInputService.InputChanged:Connect(function(input)
 		update(input)
 	end
 end)
-
 runService.Heartbeat:Connect(function()
 	if S1_isActivated == true then
 		rotateToTarget(player.Character:WaitForChild("HumanoidRootPart"), MAIN_OBJ)
