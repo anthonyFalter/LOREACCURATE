@@ -340,8 +340,9 @@ local function isPartMoving(part)
 end
 
 local function key_LISTENER()
+	print("EXECUTE TP!")
     local USER_PART
-
+	
     -- Update USER_PART when the character is added or respawned
     local function updateUserPart()
         local character = player.Character or player.CharacterAdded:Wait()
