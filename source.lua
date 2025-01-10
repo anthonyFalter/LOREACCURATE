@@ -44,6 +44,7 @@ local tempOBJ = MAIN_OBJ
 
 local function gen_UI()
 	player_stats.Name = "player_stats"
+	player_stats.ResetOnSpawn = false
 	player_stats.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	player_stats.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -339,7 +340,7 @@ local function isPartMoving(part)
 end
 
 local function key_LISTENER()
-	local USER_PART = player.Character:WaitForChild("HumanoidRootPart")
+	local USER_PART = game.Players.LocalPlayer.Character.HumanoidRootPart
 
 	UserInputService.InputBegan:Connect(function(input, isProcessed)
 		if not isProcessed then
