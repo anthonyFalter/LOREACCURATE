@@ -340,41 +340,47 @@ local function isPartMoving(part)
 end
 
 local function key_LISTENER()
-	local USER_PART = game.Players.LocalPlayer.Character.HumanoidRootPart
+    local USER_PART
 
-	UserInputService.InputBegan:Connect(function(input, isProcessed)
-		if not isProcessed then
-			-- Check if the E key is pressed
-			if input.KeyCode == Enum.KeyCode.E then
-				if MAIN_OBJ and MAIN_OBJ.Parent ~= player.Character then
-					tempOBJ = MAIN_OBJ
-					if S1_isActivated == true then
-						local startTime = tick()
-						local followDuration = 1
-						local originalPosition = USER_PART.Position
-						local teleportPartCFrame = MAIN_OBJ.CFrame
-						local backOffset = teleportPartCFrame.LookVector * -1 
-						print("TARGET: "..MAIN_OBJ.Name)
-						print("PLAYERL: "..USER_PART.Name)
-						USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+    -- Update USER_PART when the character is added or respawned
+    local function updateUserPart()
+        local character = player.Character or player.CharacterAdded:Wait()
+        USER_PART = character:WaitForChild("HumanoidRootPart")
+    end
 
-					else if S2_isActivated == true then
-							local startTime = tick()
-							local followDuration = 1
-							local originalPosition = USER_PART.Position
-							local teleportPartCFrame = MAIN_OBJ.CFrame
-							local backOffset = teleportPartCFrame.LookVector * 1 
-							USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)	
+    -- Listen for the player's character respawn
+    player.CharacterAdded:Connect(updateUserPart)
 
-						end
-					end
-				else
-					MAIN_OBJ = tempOBJ
-				end
-			end
-		end
-	end)
+    -- Initialize USER_PART for the current character
+    if player.Character then
+        updateUserPart()
+    end
+
+    -- Listen for key input
+    UserInputService.InputBegan:Connect(function(input, isProcessed)
+        if not isProcessed and USER_PART then
+            if input.KeyCode == Enum.KeyCode.E then
+                if MAIN_OBJ and MAIN_OBJ.Parent ~= player.Character then
+                    tempOBJ = MAIN_OBJ
+                    if S1_isActivated == true then
+                        local teleportPartCFrame = MAIN_OBJ.CFrame
+                        local backOffset = teleportPartCFrame.LookVector * -1
+                        print("TARGET: " .. MAIN_OBJ.Name)
+                        print("PLAYER: " .. USER_PART.Name)
+                        USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+                    elseif S2_isActivated == true then
+                        local teleportPartCFrame = MAIN_OBJ.CFrame
+                        local backOffset = teleportPartCFrame.LookVector * 1
+                        USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+                    end
+                else
+                    MAIN_OBJ = tempOBJ
+                end
+            end
+        end
+    end)
 end
+
 
 local currentOutline
 local function addOutlineToCharacter(character)
