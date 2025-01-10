@@ -358,29 +358,35 @@ local function key_LISTENER()
     end
 
     -- Listen for key input
-    UserInputService.InputBegan:Connect(function(input, isProcessed)
-        if not isProcessed and USER_PART then
-            if input.KeyCode == Enum.KeyCode.E then
-                if MAIN_OBJ and MAIN_OBJ.Parent ~= player.Character then
-                    tempOBJ = MAIN_OBJ
-                    if S1_isActivated == true then
-                        local teleportPartCFrame = MAIN_OBJ.CFrame
-                        local backOffset = teleportPartCFrame.LookVector * -1
-                        print("TARGET: " .. MAIN_OBJ.Name)
-                        print("PLAYER: " .. USER_PART.Name)
-                        USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-                    elseif S2_isActivated == true then
-                        local teleportPartCFrame = MAIN_OBJ.CFrame
-                        local backOffset = teleportPartCFrame.LookVector * 1
-                        USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
-                    end
-                else
-                    MAIN_OBJ = tempOBJ
-                end
+    local debounce = false -- Debounce to prevent spamming
+
+UserInputService.InputBegan:Connect(function(input, isProcessed)
+    if not isProcessed and USER_PART and input.KeyCode == Enum.KeyCode.E then
+        if debounce then return end -- Prevent spamming
+        debounce = true
+        task.wait(0.1) -- Cooldown period
+
+        if MAIN_OBJ and MAIN_OBJ.Parent ~= player.Character then
+            tempOBJ = MAIN_OBJ
+            local teleportPartCFrame = MAIN_OBJ.CFrame
+            local backOffset
+
+            if S1_isActivated == true then
+                backOffset = teleportPartCFrame.LookVector * -1
+                print("TARGET: " .. MAIN_OBJ.Name)
+                print("PLAYER: " .. USER_PART.Name)
+                USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
+            elseif S2_isActivated == true then
+                backOffset = teleportPartCFrame.LookVector * 1
+                USER_PART.CFrame = CFrame.new(teleportPartCFrame.Position + backOffset, teleportPartCFrame.Position)
             end
+        else
+            MAIN_OBJ = tempOBJ
         end
-    end)
-end
+
+        debounce = false -- Reset debounce
+    end
+end)
 
 
 local currentOutline
